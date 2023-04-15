@@ -31,6 +31,11 @@ preprocess <- function(networks_list) {
     net_curr <- networks_list[[i]];
     g <- asIgraph(net_curr);
     
+    Isolated <- which(degree(g) == 0);
+    g <- igraph::delete.vertices(g, Isolated);
+    
+    net_curr <- asNetwork(g)
+    
     authority <- authority_score(g)
     closeness <- closeness(g)
     constraint <- constraint(g)
@@ -70,15 +75,18 @@ preprocess <- function(networks_list) {
 }
 
 
-x <- get_network_list(10, start = 20, end=50);
+x <- get_network_list(1, start = 45, end=48);
 
 y <- preprocess(x)
 
 net_y.dyn = networkDynamic(network.list = y, vertex.pid = "vertex.names", base.net = y[[1]]);
 
-res <- tergm(net_y.dyn ~ edges + nodecov('authority')  + nodecov('degree') + nodecov('eccentricity')
+res <- tergm(net_y.dyn ~ edges + nodecov('authority') + nodecov('closeness') 
+             + nodecov('constraint') + nodecov('degree') + nodecov('eccentricity')
              + nodecov('estimate_betw') + nodecov('local_ef') + nodecov('harmonic_c')
-              + nodecov('pagerank'), estimate = 'CMLE', times = c(0:3))
+             + nodecov('knn') + nodecov('pagerank'), 
+             estimate = 'CMLE', times = c(0:3)
+            )
 
 summary(res)
 
