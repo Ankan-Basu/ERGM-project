@@ -94,9 +94,9 @@ y <- preprocess(x)
 
 res <- btergm(y ~ nodecov('closeness')  
               + nodecov('degree') + nodecov('eccentricity')
-              + nodecov('estimate_betw') + nodecov('local_ef') + nodecov('harmonic_c')
+              + nodecov('estimate_betw') + nodecov('local_ef')
               + nodecov('pagerank'),
-              parallel = "multicore", ncpus = 2, 
+              parallel = "multicore", ncpus = 2, R=500, offset=TRUE
 )
 
 summary(res)
